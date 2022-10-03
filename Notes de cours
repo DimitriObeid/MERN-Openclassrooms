@@ -1,0 +1,165 @@
+Middleware (ici en dév côté serveur) : fonctions qui capturent et traitent les requêtes envoyées au serveur, permettant de controler très précisément comment notre serveur réagit à chaque type de requête.
+
+
+# /////////////////////////////////////////////////////////////////////////////////////////////// #
+
+
+CORS (Cross-Origin Resource Sharing) : Le CORS définit la manière dont les serveurs et les navigateurs interagissent, en spécifiant quelles ressources peuvent être demandées de manière légitime – par défaut, les requêtes AJAX sont interdites.
+
+Pour permettre des requêtes cross-origin (et empêcher des erreurs CORS), des headers spécifiques de contrôle d'accès doivent être précisés pour tous vos objets de réponse.
+
+
+# /////////////////////////////////////////////////////////////////////////////////////////////// #
+
+
+AJAX (Asynchronous JavaScript and XML / JavaScript et XML asynchrones) : Il s'agit d'une méthode utilisant différentes technologies ajoutées aux navigateurs web entre 1995 et 2005, et dont la particularité est de permettre d'effectuer des requêtes au serveur web et, en conséquence, de modifier partiellement la page web affichée sur le poste client sans avoir à afficher une nouvelle page complète. Cette architecture informatique permet de construire des applications Web et des sites web dynamiques interactifs.
+
+
+# /////////////////////////////////////////////////////////////////////////////////////////////// #
+
+
+Callback : Une fonction de retour (callback) est une fonction qui est transmise en tant qu’argument à une autre fonction pour être « rappelée » ultérieurement. Une fonction qui accepte d’autres fonctions en tant qu’arguments est appelée une fonction d’ordre supérieur, qui contient la logique à partir de laquelle la fonction callback est exécutée. C’est la combinaison de ces deux éléments qui nous permet d’étendre nos fonctionnalités.
+
+
+# /////////////////////////////////////////////////////////////////////////////////////////////// #
+
+Promesse (JavaScript) : Une promesse est un objet (Promise) qui représente la complétion ou l'échec d'une opération asynchrone. La plupart du temps, on « consomme » des promesses et c'est donc ce que nous verrons dans la première partie de ce guide pour ensuite expliquer comment les créer.
+
+En résumé, une promesse est un objet qui est renvoyé et auquel on attache des callbacks plutôt que de passer des callbacks à une fonction. Ainsi, au lieu d'avoir une fonction qui prend deux callbacks en arguments :
+
+function faireQqcALAncienne(successCallback, failureCallback){
+  console.log("C'est fait");
+  // réussir une fois sur deux
+  if (Math.random() > .5) {
+    successCallback("Réussite");
+  } else {
+    failureCallback("Échec");
+  }
+}
+
+function successCallback(résultat) {
+  console.log("L'opération a réussi avec le message : " + résultat);
+}
+
+function failureCallback(erreur) {
+  console.error("L'opération a échoué avec le message : " + erreur);
+}
+
+faireQqcALAncienne(successCallback, failureCallback);
+
+#################################################
+
+On aura une fonction qui renvoie une promesse et on attachera les callbacks sur cette promesse :
+
+function faireQqc() {
+  return new Promise((successCallback, failureCallback) => {
+    console.log("C'est fait");
+    // réussir une fois sur deux
+    if (Math.random() > .5) {
+      successCallback("Réussite");
+    } else {
+      failureCallback("Échec");
+    }
+  })
+}
+
+const promise = faireQqc();
+promise.then(successCallback, failureCallback);
+
+#################################################
+
+ou encore :
+
+faireQqc().then(successCallback, failureCallback);
+
+Cette dernière forme est ce qu'on appelle un appel de fonction asynchrone. Cette convention possède différents avantages dont le premier est le chaînage.
+
+
+# /////////////////////////////////////////////////////////////////////////////////////////////// #
+
+
+Fonctions synchrones et asynchrones (JavaScript) : Deux éléments ou plus sont synchrones lorsqu’ils se produisent en même temps (synchronisés) et asynchrones lorsqu’ils ne le sont pas (non synchronisés).
+
+#################################################
+
+JavaScript utilise une file d’attente de messages dans laquelle les messages entrants (ou événements) sont conservés.
+
+Une boucle d’événement (un répartiteur de messages) distribue ces messages de manière séquentielle à une pile d’appels où les fonctions correspondantes des messages sont empilées sous forme de trames (arguments de fonction et variables) à exécuter.
+
+#################################################
+
+Fonction synchrone (JavaScript) :
+
+Par défaut, toute fonction définie en JavaScript est synchrone. Cela veut dire que, lorsqu’elle est appelée:
+
+    cette fonction exécute immédiatement l’intégralité de ses instructions puis retourne une valeur dans la foulée;
+    et que le reste du programme attend la fin de l’exécution de cette fonction avant de s’exécuter à son tour.
+
+Ainsi, quand on appelle plusieurs fonctions synchrones d’affilée, on a la garantie qu’elles s’exécutent de manière séquentielle. L’une après l’autre.
+
+// console.log() est une fonction synchrone
+console.log('a');
+console.log('b');
+console.log('c');
+// => les lettres a, b et c seront systématiquement affichées dans l'ordre
+
+--------
+Exemples
+
+Définition de fonction synchrone:
+
+function meaningOfLife () {
+  return 42;
+}
+
+----------------------------
+Appel de fonction synchrone:
+
+
+const answer = meaningOfLife();
+console.log('valeur retournée par meaningOfLife():', answer);
+
+---------------------------------------------------
+Appel de fonction synchrone avec gestion d’erreurs:
+
+try {
+  const answer = meaningOfLife();
+  console.log('valeur retournée par meaningOfLife():', answer);
+} catch (err) {
+  console.error('meaningOfLife() a rapporté une erreur:', err);
+}
+
+
+#################################################
+
+Fonction asynchrone (JavaScript) :
+
+Les fonctions synchrones sont appropriées pour effectuer des opérations courtes, rapides, tant qu’il n’est pas problématique de monopoliser le fil d’exécution du programme Node.js.
+
+Quand on développe un programme effectuant des opérations d’entrées / sorties de données – que ce soit sur le système de fichier, sur un réseau, ou sur n’importe quel matériel périphérique – il vaut mieux lancer ces opérations en tâche de fond, tout en continuant l’exécution du reste du programme.
+
+Par exemple: un serveur doit être prêt à répondre à des requêtes à tout instant, même si une autre requête est déjà en cours de traitement.
+
+Pour permettre l’exécution de plusieurs opérations en parallèle – sans bloquer l’exécution du reste du programme – le langage JavaScript fournit plusieurs manières de définir et d’appeler des fonctions Asynchrones.
+
+Le principe de fonction de callback est la manière la plus classique de procéder:
+
+    on appelle une fonction asynchrone (A) en lui passant une autre fonction (B) – appelée fonction de callback – en paramètres;
+    la fonction asynchrone (A) rend immédiatement la main au programme;
+    la fonction de callback (B) sera appelée une fois que l’opération aura terminé son exécution.
+
+Ainsi, quand on appelle plusieurs fonctions asynchrones d’affilée, leurs fonctions de callback respectives ne seront pas forcément exécutées dans le même ordre !
+
+// setTimeout() est une fonction asynchrone qui exécute la fonction de callback
+// après quelques millisecondes d'attente
+setTimeout(() => console.log('a'), 50); // afficher a dans 50 millisecondes
+setTimeout(() => console.log('b'), 90); // afficher b dans 90 millisecondes
+setTimeout(() => console.log('c'), 20); // afficher c dans 20 millisecondes
+// => ordre d'affichage: c, a, puis b
+//    car les opérations asynchrones s'exécutent en parallèle
+
+
+# /////////////////////////////////////////////////////////////////////////////////////////////// #
+
+
+Token : Un token d’authentification, aussi appelé « trusted device » (dispositif de confiance) en anglais, est utilisé pour accéder à une ressource à accès restreint (généralement une application ou un réseau d’entreprise). Il peut être considéré comme une clé électronique qui permet à un utilisateur de s’authentifier, en prouvant son identité, grâce au stockage d’un certain nombre d’informations personnelles.
